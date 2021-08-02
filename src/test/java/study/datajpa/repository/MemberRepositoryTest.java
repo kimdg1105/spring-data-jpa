@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
+import study.datajpa.entity.Team;
 
 import java.util.List;
 
@@ -19,6 +21,8 @@ class MemberRepositoryTest {
     MemberRepository memberRepository;
     @Autowired
     MemberJpaRepository memberJpaRepository;
+    @Autowired
+    TeamRepository teamRepository;
 
     Member member1;
     Member member2;
@@ -93,5 +97,33 @@ class MemberRepositoryTest {
         List<Member> members = memberRepository.findByUsernameAndAge("AAA",20);
         Member member = members.get(0);
         assertThat(member).isEqualTo(member2);
+    }
+
+    @Test
+    public void findUsernameList(){
+        List<String> members = memberRepository.findUsernameList();
+        for (String member : members) {
+            System.out.println("member = " + member);
+        }
+        assertThat(members.size()).isEqualTo(3);
+    }
+
+    @Test
+    public void findMemberDtosTest(){
+        Team teamA = new Team("TeamA");
+        Team teamB = new Team("TeamB");
+        teamRepository.save(teamA);
+        teamRepository.save(teamB);
+
+
+        member1.changeTeam(teamA);
+        member2.changeTeam(teamA);
+        member3.changeTeam(teamB);
+
+        List<MemberDto> members = memberRepository.findMemberDtos();
+        for (MemberDto member : members) {
+            System.out.println("member.toString() = " + member.toString());
+        }
+        assertThat(members.size()).isEqualTo(3);
     }
 }
