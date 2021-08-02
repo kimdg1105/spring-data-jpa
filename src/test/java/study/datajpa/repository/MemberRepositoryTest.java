@@ -1,5 +1,6 @@
 package study.datajpa.repository;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,13 +17,27 @@ class MemberRepositoryTest {
 
     @Autowired
     MemberRepository memberRepository;
+    @Autowired
+    MemberJpaRepository memberJpaRepository;
+
+    Member member1;
+    Member member2;
+    Member member3;
+
+    @BeforeEach
+    void beforeEach(){
+        member1 = Member.builder().username("AAA").age(10).build();
+        member2 = Member.builder().username("AAA").age(20).build();
+        member3 = Member.builder().username("BBB").age(20).build();
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+        memberRepository.save(member3);
+
+    }
+
 
     @Test
     public void basicCRUD() {
-        Member member1 = new Member("member1");
-        Member member2 = new Member("member2");
-        memberRepository.save(member1);
-        memberRepository.save(member2);
 
         //단건 조회 검증
         Member findMember1 =
@@ -34,16 +49,49 @@ class MemberRepositoryTest {
 
         //리스트 조회 검증
         List<Member> all = memberRepository.findAll();
-        assertThat(all.size()).isEqualTo(2);
+        assertThat(all.size()).isEqualTo(3);
 
         //카운트 검증
         long count = memberRepository.count();
-        assertThat(count).isEqualTo(2);
+        assertThat(count).isEqualTo(3);
 
         //삭제 검증
         memberRepository.delete(member1);
         memberRepository.delete(member2);
         long deletedCount = memberRepository.count();
-        assertThat(deletedCount).isEqualTo(0);
+        assertThat(deletedCount).isEqualTo(1);
+    }
+
+    @Test
+    public void findByUsernameAndAgeGreaterThan(){
+
+
+        List<Member> findMembers = memberRepository.findByUsernameAndAgeGreaterThan("AAA", 15);
+
+        assertThat(findMembers.size()).isEqualTo(1);
+        assertThat(findMembers.get(0).getUsername()).isEqualTo("AAA");
+        assertThat(findMembers.get(0).getAge()).isEqualTo(20);
+
+    }
+
+    @Test
+    public void namedQueryTest(){
+        List<Member> members = memberJpaRepository.findByUsername("BBB");
+        Member member = members.get(0);
+        assertThat(member).isEqualTo(member3);
+    }
+
+    @Test
+    public void namedQueryTest2(){
+        List<Member> members = memberRepository.findByUsername("BBB");
+        Member member = members.get(0);
+        assertThat(member).isEqualTo(member3);
+    }
+
+    @Test
+    public void namedQueryTest3(){
+        List<Member> members = memberRepository.findByUsernameAndAge("AAA",20);
+        Member member = members.get(0);
+        assertThat(member).isEqualTo(member2);
     }
 }
