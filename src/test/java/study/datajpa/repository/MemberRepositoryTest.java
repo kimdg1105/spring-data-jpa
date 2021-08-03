@@ -1,7 +1,9 @@
 package study.datajpa.repository;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +31,11 @@ class MemberRepositoryTest {
     Member member3;
 
     @BeforeEach
-    void beforeEach(){
+    void beforeEach(TestInfo info) {
+        if (info.getDisplayName().equals("paging")) {
+            return; // skip @BeforeEach in mySpecialTestName test
+        }
+
         member1 = Member.builder().username("AAA").age(10).build();
         member2 = Member.builder().username("AAA").age(20).build();
         member3 = Member.builder().username("BBB").age(20).build();
@@ -67,7 +73,7 @@ class MemberRepositoryTest {
     }
 
     @Test
-    public void findByUsernameAndAgeGreaterThan(){
+    public void findByUsernameAndAgeGreaterThan() {
 
 
         List<Member> findMembers = memberRepository.findByUsernameAndAgeGreaterThan("AAA", 15);
@@ -79,28 +85,28 @@ class MemberRepositoryTest {
     }
 
     @Test
-    public void namedQueryTest(){
+    public void namedQueryTest() {
         List<Member> members = memberJpaRepository.findByUsername("BBB");
         Member member = members.get(0);
         assertThat(member).isEqualTo(member3);
     }
 
     @Test
-    public void namedQueryTest2(){
+    public void namedQueryTest2() {
         List<Member> members = memberRepository.findByUsername("BBB");
         Member member = members.get(0);
         assertThat(member).isEqualTo(member3);
     }
 
     @Test
-    public void namedQueryTest3(){
-        List<Member> members = memberRepository.findByUsernameAndAge("AAA",20);
+    public void namedQueryTest3() {
+        List<Member> members = memberRepository.findByUsernameAndAge("AAA", 20);
         Member member = members.get(0);
         assertThat(member).isEqualTo(member2);
     }
 
     @Test
-    public void findUsernameList(){
+    public void findUsernameList() {
         List<String> members = memberRepository.findUsernameList();
         for (String member : members) {
             System.out.println("member = " + member);
@@ -109,12 +115,11 @@ class MemberRepositoryTest {
     }
 
     @Test
-    public void findMemberDtosTest(){
+    public void findMemberDtosTest() {
         Team teamA = new Team("TeamA");
         Team teamB = new Team("TeamB");
         teamRepository.save(teamA);
         teamRepository.save(teamB);
-
 
         member1.changeTeam(teamA);
         member2.changeTeam(teamA);
@@ -125,5 +130,39 @@ class MemberRepositoryTest {
             System.out.println("member.toString() = " + member.toString());
         }
         assertThat(members.size()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("paging")
+    public void paging() {
+        //given
+        for (int i = 0; i < 10; i++) {
+            member1 = Member.builder().username("AAA").age(10).build();
+            member2 = Member.builder().username("AAA").age(20).build();
+            memberJpaRepository.save(member1);
+            memberJpaRepository.save(member2);
+        }
+        int age = 10;
+        int offset = 0;
+        int limit = 5;
+
+
+        //when
+        List<Member> members = memberRepository.findAll();
+        List<Member> memberPage = memberJpaRepository.findByPage(age, offset, limit);
+        long totalCount = memberJpaRepository.totalCount(age);
+
+
+        //then
+        for (Member member : members) {
+            System.out.println("member = " + member);
+        }
+
+        System.out.println("----------------");
+
+        for (Member member : memberPage) {
+            System.out.println("member = " + member);
+        }
+        System.out.println("totalCount = " + totalCount);
     }
 }
