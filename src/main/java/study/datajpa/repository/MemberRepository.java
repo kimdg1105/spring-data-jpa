@@ -2,6 +2,7 @@ package study.datajpa.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -18,6 +19,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     /**
      * Member.findByUsername에서 네임드쿼리를 찾아 있으면 실행한다.
      * 없다면, 메소드이름으로 쿼리를 생성한다.
+     *
      * @param username
      * @return
      */
@@ -40,4 +42,13 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Modifying(clearAutomatically = true) // 쿼리 이후 영속성 컨텍스트를 자동으로 클리어한다.
     @Query("update Member m set m.age = :age where m.age >= :age")
     int bulkAgePlus(@Param("age") int age);
+
+    @Query("select m from Member m join fetch m.team")
+    List<Member> findMemberFetchJoin();
+
+    @Override
+    @EntityGraph(attributePaths = {"team"})
+    List<Member> findAll();
+
+    List<Member> findMemberByUsername(@Param("username") String username);
 }

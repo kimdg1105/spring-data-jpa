@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
@@ -205,4 +206,67 @@ class MemberRepositoryTest {
         System.out.println("updateCount = " + updateCount);
     }
 
+    @Test
+    public void findMemberLazy() {
+        //given
+        Team teamA = new Team("teamA");
+        Team teamB = new Team("teamB");
+        teamRepository.save(teamA);
+        teamRepository.save(teamB);
+
+        member1.setTeam(teamA);
+        member2.setTeam(teamA);
+        member3.setTeam(teamB);
+
+        em.flush();
+        em.clear();
+
+        //when
+        List<Member> members = memberRepository.findAll();
+
+        for (Member member : members) {
+            System.out.println("member = " + member.getUsername());
+            // Lazy Loading (N+1 문제 발생)
+            System.out.println("member.getTeam() = " + member.getTeam().getName());
+
+        }
+
+
+        //then
+
+
+    }
+
+    @Test
+    public void findMemberFetchJoinTest() {
+        //given
+        Team teamA = new Team("teamA");
+        Team teamB = new Team("teamB");
+        teamRepository.save(teamA);
+        teamRepository.save(teamB);
+
+        member1.setTeam(teamA);
+        member2.setTeam(teamA);
+        member3.setTeam(teamB);
+
+        em.flush();
+        em.clear();
+
+        //when
+        List<Member> members = memberRepository.findMemberFetchJoin();
+
+        for (Member member : members) {
+            System.out.println("member = " + member.getUsername());
+            // Lazy Loading (N+1 문제 발생)
+            System.out.println("member.getTeam() = " + member.getTeam().getName());
+
+        }
+
+        memberRepository.findAll();
+
+
+        //then
+
+
+    }
 }

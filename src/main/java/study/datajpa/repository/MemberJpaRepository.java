@@ -62,11 +62,7 @@ public class MemberJpaRepository {
     }
 
     public int bulkAgePlus(int age) {
-<<<<<<< HEAD
         int updateCount = em.createQuery("update Member m set m.age = :age where m.age >= :age")
-=======
-        int updateCount = em.createQuery("update Member m set m.age = :age where m.age < :age")
->>>>>>> main
                 .setParameter("age", age)
                 .executeUpdate();
         return updateCount;
