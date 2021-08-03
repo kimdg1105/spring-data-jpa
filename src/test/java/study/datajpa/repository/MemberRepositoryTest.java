@@ -24,8 +24,7 @@ class MemberRepositoryTest {
 
     @Autowired
     MemberRepository memberRepository;
-    @Autowired
-    MemberJpaRepository memberJpaRepository;
+
     @Autowired
     TeamRepository teamRepository;
 
@@ -87,12 +86,6 @@ class MemberRepositoryTest {
 
     }
 
-    @Test
-    public void namedQueryTest() {
-        List<Member> members = memberJpaRepository.findByUsername("BBB");
-        Member member = members.get(0);
-        assertThat(member).isEqualTo(member3);
-    }
 
     @Test
     public void namedQueryTest2() {
@@ -135,39 +128,6 @@ class MemberRepositoryTest {
         assertThat(members.size()).isEqualTo(3);
     }
 
-    @Test
-    @DisplayName("paging")
-    public void paging() {
-        //given
-        for (int i = 0; i < 10; i++) {
-            member1 = Member.builder().username("AAA").age(10).build();
-            member2 = Member.builder().username("AAA").age(20).build();
-            memberJpaRepository.save(member1);
-            memberJpaRepository.save(member2);
-        }
-        int age = 10;
-        int offset = 0;
-        int limit = 5;
-
-
-        //when
-        List<Member> members = memberRepository.findAll();
-        List<Member> memberPage = memberJpaRepository.findByPage(age, offset, limit);
-        long totalCount = memberJpaRepository.totalCount(age);
-
-
-        //then
-        for (Member member : members) {
-            System.out.println("member = " + member);
-        }
-
-        System.out.println("----------------");
-
-        for (Member member : memberPage) {
-            System.out.println("member = " + member);
-        }
-        System.out.println("totalCount = " + totalCount);
-    }
 
     @Test
     @DisplayName("paging")
@@ -183,8 +143,8 @@ class MemberRepositoryTest {
         for (int i = 0; i < 10; i++) {
             member1 = Member.builder().username("AAA" + i).age(10).team(teamA).build();
             member2 = Member.builder().username("AAA" + i).age(20).team(teamB).build();
-            memberJpaRepository.save(member1);
-            memberJpaRepository.save(member2);
+            memberRepository.save(member1);
+            memberRepository.save(member2);
         }
 
         int age = 10;
@@ -208,5 +168,5 @@ class MemberRepositoryTest {
         assertThat(memberPage.getTotalElements()).isEqualTo(20);
         assertThat(memberPage.getNumber()).isEqualTo(0);
         assertThat(memberPage.isFirst()).isTrue();
-
     }
+}
