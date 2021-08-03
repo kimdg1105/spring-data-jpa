@@ -181,14 +181,14 @@ class MemberRepositoryTest {
 
 
         for (int i = 0; i < 10; i++) {
-            member1 = Member.builder().username("AAA"+ i).age(10).team(teamA).build();
-            member2 = Member.builder().username("AAA"+ i).age(20).team(teamB).build();
+            member1 = Member.builder().username("AAA" + i).age(10).team(teamA).build();
+            member2 = Member.builder().username("AAA" + i).age(20).team(teamB).build();
             memberJpaRepository.save(member1);
             memberJpaRepository.save(member2);
         }
 
         int age = 10;
-        PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC,"username"));
+        PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "username"));
 
         //when
         List<Member> members = memberRepository.findAll();
@@ -208,5 +208,5 @@ class MemberRepositoryTest {
         assertThat(memberPage.getTotalElements()).isEqualTo(20);
         assertThat(memberPage.getNumber()).isEqualTo(0);
         assertThat(memberPage.isFirst()).isTrue();
+
     }
-}
