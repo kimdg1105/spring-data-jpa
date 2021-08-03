@@ -14,6 +14,7 @@ import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,13 +29,16 @@ class MemberRepositoryTest {
     @Autowired
     TeamRepository teamRepository;
 
+    @Autowired
+    EntityManager em;
+
     Member member1;
     Member member2;
     Member member3;
 
     @BeforeEach
     void beforeEach(TestInfo info) {
-        if (info.getDisplayName().equals("paging")) {
+        if (info.getDisplayName().equals("noBeforeEach")) {
             return; // skip @BeforeEach in mySpecialTestName test
         }
 
@@ -169,4 +173,40 @@ class MemberRepositoryTest {
         assertThat(memberPage.getNumber()).isEqualTo(0);
         assertThat(memberPage.isFirst()).isTrue();
     }
+<<<<<<< HEAD
+
+    @Test
+    @DisplayName("noBeforeEach")
+    public void bulkUpdateJpaTest() {
+        //given
+        for (int i = 0; i < 10; i++) {
+            member1 = Member.builder().username("AAA").age(i + 10).build();
+            member2 = Member.builder().username("AAA").age(i + 20).build();
+            memberRepository.save(member1);
+            memberRepository.save(member2);
+        }
+        List<Member> members = memberRepository.findAll();
+        for (Member member : members) {
+            System.out.println("member = " + member);
+        }
+
+
+        //when
+        int updateCount = memberRepository.bulkAgePlus(15);
+//        em.flush();
+//        em.clear();
+
+
+        //then
+        System.out.println("------Before/After--------");
+        List<Member> updateMembers = memberRepository.findAll();
+        for (Member member : updateMembers) {
+            System.out.println("member = " + member);
+        }
+        System.out.println("updateCount = " + updateCount);
+    }
+
+
+=======
+>>>>>>> main
 }
