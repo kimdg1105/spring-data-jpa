@@ -173,7 +173,6 @@ class MemberRepositoryTest {
         assertThat(memberPage.getNumber()).isEqualTo(0);
         assertThat(memberPage.isFirst()).isTrue();
     }
-<<<<<<< HEAD
 
     @Test
     @DisplayName("noBeforeEach")
@@ -206,7 +205,4 @@ class MemberRepositoryTest {
         System.out.println("updateCount = " + updateCount);
     }
 
-
-=======
->>>>>>> main
 }

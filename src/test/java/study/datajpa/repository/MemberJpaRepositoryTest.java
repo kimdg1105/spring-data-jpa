@@ -8,11 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.entity.Member;
-
-<<<<<<< HEAD
 import javax.persistence.EntityManager;
-=======
->>>>>>> main
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,12 +20,9 @@ public class MemberJpaRepositoryTest {
     @Autowired
     MemberJpaRepository memberJpaRepository;
 
-<<<<<<< HEAD
     @Autowired
     EntityManager em;
 
-=======
->>>>>>> main
     Member member1;
     Member member2;
     Member member3;
@@ -37,11 +30,8 @@ public class MemberJpaRepositoryTest {
 
     @BeforeEach
     void beforeEach(TestInfo info) {
-<<<<<<< HEAD
+
         if (info.getDisplayName().equals("noBeforeEach")) {
-=======
-        if (info.getDisplayName().equals("paging")) {
->>>>>>> main
             return; // skip @BeforeEach in mySpecialTestName test
         }
 
@@ -88,11 +78,7 @@ public class MemberJpaRepositoryTest {
     }
 
     @Test
-<<<<<<< HEAD
     @DisplayName("noBeforeEach")
-=======
-    @DisplayName("paging")
->>>>>>> main
     public void paging() {
         //given
         for (int i = 0; i < 10; i++) {
@@ -126,10 +112,7 @@ public class MemberJpaRepositoryTest {
     }
 
     @Test
-<<<<<<< HEAD
     @DisplayName("noBeforeEach")
-=======
->>>>>>> main
     public void bulkUpdateJpaTest() {
         //given
         for (int i = 0; i < 10; i++) {
@@ -146,23 +129,14 @@ public class MemberJpaRepositoryTest {
 
         //when
         int updateCount = memberJpaRepository.bulkAgePlus(15);
-<<<<<<< HEAD
-        em.flush();
-        em.clear();
 
-=======
->>>>>>> main
 
         //then
         System.out.println("------Before/After--------");
         List<Member> updateMembers = memberJpaRepository.findAll();
-<<<<<<< HEAD
-        for (Member member : members) {
-            System.out.println("member = " + updateMembers);
-=======
+
         for (Member member : updateMembers) {
             System.out.println("member = " + member);
->>>>>>> main
         }
         System.out.println("updateCount = " + updateCount);
     }
