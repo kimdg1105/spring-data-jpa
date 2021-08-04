@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
@@ -261,12 +260,39 @@ class MemberRepositoryTest {
             System.out.println("member.getTeam() = " + member.getTeam().getName());
 
         }
+    }
 
-        memberRepository.findAll();
+    @Test
+    public void queryHint(){
+        Member member1 = new Member("member1", 10);
+        memberRepository.save(member1);
+        em.flush();
+        em.clear();
 
+        //when
+        Member findMember = memberRepository.findReadOnlyByUsername("member1");
+        findMember.setUsername("modifyName");
 
-        //then
+        em.flush();
+    }
 
+//    @Test
+//    public void queryLock(){
+//        Member member1 = new Member("member1", 10);
+//        memberRepository.save(member1);
+//        em.flush();
+//        em.clear();
+//
+//        //when
+//        List<Member> findMember = memberRepository.findMemberByUsernameWithLock("member1");
+//        em.clear();
+//    }
 
+    @Test
+    public void forCustom(){
+        List<Member> memberCustom = memberRepository.findMemberCustom();
+        for (Member member : memberCustom) {
+            System.out.println("member = " + member);
+        }
     }
 }
