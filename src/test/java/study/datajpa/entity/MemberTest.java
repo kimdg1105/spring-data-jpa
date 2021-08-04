@@ -89,4 +89,28 @@ class MemberTest {
         assertThat(deletedCount).isEqualTo(0);
     }
 
+    @Test
+    public void JpaEventBaseEntity() throws Exception {
+        //given
+        Member member = new Member("member1");
+        memberRepository.save(member); // @PrePersist 발생
+
+        Thread.sleep(100);
+        member.setUsername("m2m2");
+
+        em.flush(); //@PreUpdate 발생
+        em.clear();
+
+        //when
+        Member byId = memberRepository.findById(member.getId()).get();
+
+        //then
+        System.out.println("member = " + member.getCreadtedDate());
+        System.out.println("member.getCreatedBy() = " + member.getCreatedBy());
+        System.out.println("member = " + member.getLastModifiedDate());
+        System.out.println("member = " + member.getUpdatedBy());
+
+
+    }
+
 }
