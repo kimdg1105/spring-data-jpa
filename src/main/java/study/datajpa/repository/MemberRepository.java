@@ -7,11 +7,10 @@ import org.springframework.data.repository.query.Param;
 import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 
-import javax.persistence.LockModeType;
 import javax.persistence.QueryHint;
 import java.util.List;
 
-public interface MemberRepository extends JpaRepository<Member, Long>, MemberCustomRepository {
+public interface MemberRepository extends JpaRepository<Member, Long>, MemberCustomRepository, JpaSpecificationExecutor {
 
     List<Member> findByUsernameAndAgeGreaterThan(String username, int age);
 
@@ -51,9 +50,23 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberCus
 
     List<Member> findMemberByUsername(@Param("username") String username);
 
-    @QueryHints(@QueryHint(name = "org.hibernate.readOnly", value = "true")) //하이버네이트 내부적으로 스냅샷을 생성하지 않게 한다.
+    @QueryHints(@QueryHint(name = "org.hibernate.readOnly", value = "true"))
+        //하이버네이트 내부적으로 스냅샷을 생성하지 않게 한다.
     Member findReadOnlyByUsername(String username);
 
 //    @Lock(LockModeType.PESSIMISTIC_WRITE)
 //    List<Member> findMemberByUsernameWithLock(String username);
+
+    List<UsernameOnly> findProjectionsByUsername(@Param("username") String username);
+
+    @Query(value = "select * from member where username = ?", nativeQuery = true)
+    List<Member> findByNativeQuery(String username);
+
+    @Query(value = "select m.member_id as id, m.username, t.name as teamName" +
+            " from member m left join team t",
+            countQuery = "select count (*) from member",
+            nativeQuery = true)
+    Page<MemberProjection> findByNativProjection(Pageable pageable);
+
+
 }
